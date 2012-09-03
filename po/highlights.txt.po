@@ -1,0 +1,114 @@
+# Copyright (C) 2012 Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# Anders Nawroth <anders@neotechnology.com>, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2012-09-03 16:39+0300\n"
+"PO-Revision-Date: 2012-09-03 15:16+0200\n"
+"Last-Translator: \n"
+"Language-Team: American English <kde-i18n-doc@kde.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Lokalize 1.4\n"
+
+#. type: Title =
+#: target/classes/introduction/highlights.txt:3
+#, no-wrap
+msgid "Neo4j Highlights"
+msgstr "Points forts de Neo4j"
+
+#. type: Plain text
+#: target/classes/introduction/highlights.txt:6
+msgid ""
+"As a robust, scalable and high-performance database, Neo4j is suitable for "
+"full enterprise deployment or a subset of the full server can be used in "
+"lightweight projects."
+msgstr ""
+"Définie comme une base de données robuste, évolutive et très performante, "
+"Neo4j convient aussi bien pour le deploiement en grande entreprise que pour "
+"les projets plus légers en utilisant une partie du serveur complet."
+
+#. type: Plain text
+#: target/classes/introduction/highlights.txt:8
+msgid "It features:"
+msgstr "Fonctionnalités:"
+
+#. type: Plain text
+#: target/classes/introduction/highlights.txt:10
+msgid "true ACID transactions"
+msgstr "transactions ACID réelles"
+
+#. type: Plain text
+#: target/classes/introduction/highlights.txt:11
+msgid "high availability"
+msgstr "haute disponibilité"
+
+#. type: Plain text
+#: target/classes/introduction/highlights.txt:12
+msgid "scales to billions of nodes and relationships"
+msgstr "supporte jusqu'à des milliards de noeuds et relations"
+
+#. type: Plain text
+#: target/classes/introduction/highlights.txt:13
+msgid "high speed querying through traversals"
+msgstr "requêtes ultra-rapides grâce aux traversées"
+
+#. type: Plain text
+#: target/classes/introduction/highlights.txt:18
+msgid ""
+"Proper ACID behavior is the foundation of data reliability.  Neo4j enforces "
+"that all operations that modify data occur within a transaction, "
+"guaranteeing consistent data.  This robustness extends from single instance "
+"embedded graphs to multi-server high availability installations.  For "
+"details, see <<transactions>>."
+msgstr ""
+"Un comportement ACID sain est le fondement même de la fiabilité.  Neo4j "
+"renforce cela en s'assurant que toutes les opérations modifiant les données "
+"soient exécutées au sein d'une transaction, garantissant la cohérence des "
+"données.  Cette robustesse s'étend depuis une simple instance de graphe "
+"embarquée vers des installations multi-serveurs à haute disponibilité.  Pour "
+"plus de détails, reportez-vous à <<transactions>>."
+
+#. type: Plain text
+#: target/classes/introduction/highlights.txt:22
+msgid ""
+"Reliable graph storage can easily be added to any application.  A graph can "
+"scale in size and complexity as the application evolves, with little impact "
+"on performance.  Whether starting new development, or augmenting existing "
+"functionality, Neo4j is only limited by physical hardware."
+msgstr ""
+"Un système de stockage en graphe fiable peut facilement être ajouté à "
+"n'importe quelle application.  Un graphe s'étend en taille et complexité au "
+"fur et à mesure que l'application évolue, avec de faibles impacts sur la "
+"performance.  Pour le commencement d'un nouveau projet comme pour l'ajout de "
+"fonctionnalités existantes, Neo4j est adapté et n'est limité que par le "
+"matériel physique."
+
+#. type: Plain text
+#: target/classes/introduction/highlights.txt:26
+msgid ""
+"A single server instance can handle a graph of billions of nodes and "
+"relationships.  When data throughput is insufficient, the graph database can "
+"be distributed among multiple servers in a high availability configuration.  "
+"See <<ha>> to learn more."
+msgstr ""
+"Une seule instance serveur peut traiter un graphe contenant des milliards de "
+"noeuds et relations.  Quand le taux de transfert est insuffisant, la base de "
+"données graphe peut être distribuée sur plusieurs serveurs dans une "
+"configuration haute-disponibilité.  Lisez <<ha>> pour en apprendre plus."
+
+#. type: Plain text
+#: target/classes/introduction/highlights.txt:30
+msgid ""
+"The graph database storage shines when storing richly-connected data.  "
+"Querying is performed through traversals, which can perform millions of "
+"traversal steps per second.  A traversal step resembles a _join_ in a RDBMS."
+msgstr ""
+"Une base de données graphe brille quand elle stocke des données hautement "
+"connectées.  Les requêtes sont exécutées à l'aide de traversées, qui peuvent "
+"procéder à plusieurs millions de traversées par seconde.  Une traversée "
+"ressemble à une _jointure_ dans les bases de données relationnelles."

@@ -81,7 +81,7 @@ ASCIIDOC_FLAGS = $(V) $(VERS) $(GITVERS) $(IMPDIR)
 
 A2X_FLAGS = $(K) $(ASCIIDOC_FLAGS)
 
-.PHONY: preview help
+.PHONY: preview help translation
 
 help:
 	@echo "Please use 'make <target>' where <target> is one of"
@@ -142,4 +142,7 @@ simple-asciidoc: initialize installextensions
 	cp -ru "$(CSSDIR)/"* "$(SINGLEHTMLDIR)/css"
 	cp -ru "$(JSDIR)/"* "$(SINGLEHTMLDIR)/js"
 
+translation:
+	# running po4a
+	po4a -v conf/po4a.conf
 
