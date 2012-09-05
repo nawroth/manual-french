@@ -4,3 +4,8 @@ po4a-gettextize -f text -m target/classes/introduction/the-neo4j-graphdb.txt -l 
 
  --copyright-holder "Neo Technology" --package-name "Neo4j" --package-version ""
  
+msgcat -o compendium.po file1.po file2.po
+  
+msgattrib --clear-fuzzy --no-wrap -o outputfile.po inputfile.po
+
+
