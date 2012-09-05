@@ -1,6 +1,5 @@
 [[what-is-a-graphdb]]
-Qu'est-ce qu'une base de données graphe?
-========================================
+= Qu'est-ce qu'une base de données graphe? =
 
 Une base de données graphe stocke les données en graphe, structure de données la plus générique, capable de représenter avec élégance n'importe quel type de 
 données d'une manière ultra accessible.

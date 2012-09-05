@@ -1,6 +1,5 @@
 [[graphdb-neo4j]]
-La base de données Graphe Neo4j
-===============================
+= La base de données Graphe Neo4j =
 
 Ce chapître entre plus en détails dans le comportement et le modèle de données de Neo4j.
 

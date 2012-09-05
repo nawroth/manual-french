@@ -1,28 +1,30 @@
-# Copyright (C) 2012 Free Software Foundation, Inc.
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
 # This file is distributed under the same license as the PACKAGE package.
-# Anders Nawroth <anders@neotechnology.com>, 2012.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"POT-Creation-Date: 2012-09-03 16:39+0300\n"
-"PO-Revision-Date: 2012-09-03 15:16+0200\n"
-"Last-Translator: \n"
-"Language-Team: American English <kde-i18n-doc@kde.org>\n"
-"Language: fr\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2012-09-05 02:33+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 1.4\n"
 
 #. type: Title =
 #: target/classes/introduction/highlights.txt:3
-#, no-wrap
+#, fuzzy, no-wrap
 msgid "Neo4j Highlights"
 msgstr "Points forts de Neo4j"
 
 #. type: Plain text
 #: target/classes/introduction/highlights.txt:6
+#, fuzzy
 msgid ""
 "As a robust, scalable and high-performance database, Neo4j is suitable for "
 "full enterprise deployment or a subset of the full server can be used in "
@@ -34,31 +36,37 @@ msgstr ""
 
 #. type: Plain text
 #: target/classes/introduction/highlights.txt:8
+#, fuzzy
 msgid "It features:"
 msgstr "Fonctionnalités:"
 
 #. type: Plain text
 #: target/classes/introduction/highlights.txt:10
+#, fuzzy
 msgid "true ACID transactions"
 msgstr "transactions ACID réelles"
 
 #. type: Plain text
 #: target/classes/introduction/highlights.txt:11
+#, fuzzy
 msgid "high availability"
 msgstr "haute disponibilité"
 
 #. type: Plain text
 #: target/classes/introduction/highlights.txt:12
+#, fuzzy
 msgid "scales to billions of nodes and relationships"
 msgstr "supporte jusqu'à des milliards de noeuds et relations"
 
 #. type: Plain text
 #: target/classes/introduction/highlights.txt:13
+#, fuzzy
 msgid "high speed querying through traversals"
 msgstr "requêtes ultra-rapides grâce aux traversées"
 
 #. type: Plain text
 #: target/classes/introduction/highlights.txt:18
+#, fuzzy
 msgid ""
 "Proper ACID behavior is the foundation of data reliability.  Neo4j enforces "
 "that all operations that modify data occur within a transaction, "
@@ -75,6 +83,7 @@ msgstr ""
 
 #. type: Plain text
 #: target/classes/introduction/highlights.txt:22
+#, fuzzy
 msgid ""
 "Reliable graph storage can easily be added to any application.  A graph can "
 "scale in size and complexity as the application evolves, with little impact "
@@ -90,6 +99,7 @@ msgstr ""
 
 #. type: Plain text
 #: target/classes/introduction/highlights.txt:26
+#, fuzzy
 msgid ""
 "A single server instance can handle a graph of billions of nodes and "
 "relationships.  When data throughput is insufficient, the graph database can "
@@ -103,6 +113,7 @@ msgstr ""
 
 #. type: Plain text
 #: target/classes/introduction/highlights.txt:30
+#, fuzzy
 msgid ""
 "The graph database storage shines when storing richly-connected data.  "
 "Querying is performed through traversals, which can perform millions of "

@@ -1,3 +1,6 @@
-po4a-gettextize -f text -m master.txt -l translation.asciidoc -p translation.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
+po4a-gettextize -f text -m target/classes/introduction/what-is-a-graphdb.txt -l introduction/what-is-a-graphdb.asciidoc -p po/what-is-a-graphdb.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
 
+po4a-gettextize -f text -m target/classes/introduction/the-neo4j-graphdb.txt -l introduction/the-neo4j-graphdb.asciidoc -p po/the-neo4j-graphdb.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
 
+ --copyright-holder "Neo Technology" --package-name "Neo4j" --package-version ""
+ 

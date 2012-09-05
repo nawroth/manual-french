@@ -39,6 +39,12 @@ SCRIPTDIR        = $(TOOLSDIR)/build
 ASCIDOCDIR       = $(TOOLSDIR)/bin/asciidoc
 ASCIIDOC         = $(ASCIDOCDIR)/asciidoc.py
 A2X              = $(ASCIDOCDIR)/a2x.py
+PO4ADIR          = $(TOOLSDIR)/bin/po4a
+PO4ALIB          = $(PO4ADIR)/lib
+PO4A             = $(PO4ADIR)/po4a
+PO4AGETTEXTIZE   = $(PO4ADIR)/po4a-gettextize
+PO4ATRANSLATE    = $(PO4ADIR)/po4a-translate
+
 
 ifdef VERBOSE
 	V = -v
@@ -81,7 +87,7 @@ ASCIIDOC_FLAGS = $(V) $(VERS) $(GITVERS) $(IMPDIR)
 
 A2X_FLAGS = $(K) $(ASCIIDOC_FLAGS)
 
-.PHONY: preview help translation
+.PHONY: preview help translate gettextize
 
 help:
 	@echo "Please use 'make <target>' where <target> is one of"
@@ -118,6 +124,7 @@ initialize:
 	#
 	#
 	find $(TOOLSDIR) \( -path '*.py' -o -path '*.sh' \) -exec chmod 0755 {} \;
+	find $(PO4ADIR) \( -path '*po4a' -o -path '*po4a-*' \) -exec chmod 0755 {} \;
 
 installextensions: initialize
 	#
@@ -142,7 +149,14 @@ simple-asciidoc: initialize installextensions
 	cp -ru "$(CSSDIR)/"* "$(SINGLEHTMLDIR)/css"
 	cp -ru "$(JSDIR)/"* "$(SINGLEHTMLDIR)/js"
 
-translation:
+translate:
 	# running po4a
-	po4a -v conf/po4a.conf
+	$(PO4ATRANSLATE) -v conf/po4a.conf -f text -m target/classes/introduction/the-neo4j-graphdb.txt -p po/the-neo4j-graphdb.txt.po -l target/generated/introduction/the-neo4j-graphdb.asciidoc -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
+
+gettextize:
+	# running gettextize
+	PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE)  -f text -m target/classes/introduction/the-neo4j-graphdb.txt -l introduction/the-neo4j-graphdb.asciidoc -p po/the-neo4j-graphdb.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
+	PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE)  -f text -m target/classes/introduction/what-is-a-graphdb.txt -l introduction/what-is-a-graphdb.asciidoc -p po/what-is-a-graphdb.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
+	PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE)  -f text -m target/classes/introduction/highlights.txt -l introduction/highlights.asciidoc -p po/highlights.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
+
 
