@@ -44,6 +44,7 @@ PO4ALIB          = $(PO4ADIR)/lib
 PO4A             = $(PO4ADIR)/po4a
 PO4AGETTEXTIZE   = $(PO4ADIR)/po4a-gettextize
 PO4ATRANSLATE    = $(PO4ADIR)/po4a-translate
+TMPPO            = $(BUILDDIR)/tmp.po
 
 
 ifdef VERBOSE
@@ -154,11 +155,13 @@ translate:
 	PERLLIB=$(PO4ALIB) $(PO4ATRANSLATE)  -f text -m target/classes/introduction/the-neo4j-graphdb.txt -p po/introduction.po -l target/generated/introduction/the-neo4j-graphdb.asciidoc -o asciidoc -L UTF-8 -M UTF-8
 
 gettextize:
-	if [ -z "$(original)" ]; then echo "Missing parameter 'original'."; exit 1;	fi
-	if [ -z "$(translation)" ]; then echo "Missing parameter 'translation'."; exit 1;	fi
-	if [ -z "$(pofile)" ]; then echo "Missing parameter 'pofile'."; exit 1;	fi
-	PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE)  -f text -m "$(original)" -l "$(translation)" -p "target/tmp.po" -o asciidoc -L UTF-8 -M UTF-8
-	msgcat -o "$(pofile)" "$(pofile)" "target/tmp.po"
+	if [ -z "$(original)" ]; then echo "Missing parameter 'original'."; exit 1; fi
+	if [ -z "$(translation)" ]; then echo "Missing parameter 'translation'."; exit 1; fi
+	if [ -z "$(pofile)" ]; then echo "Missing parameter 'pofile'."; exit 1; fi
+	PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE) -f text -m "$(original)" -l "$(translation)" -p "$(TMPPO)" -o asciidoc -L UTF-8 -M UTF-8
+	msginit -i "$(TMPPO)" -o "$(TMPPO)" --locale "fr" --no-translator 
+	msgcat -o "$(pofile)" "$(pofile)" "$(TMPPO)"
+	#make gettextize original="target/classes/introduction/the-neo4j-graphdb.txt" translation="introduction/the-neo4j-graphdb.asciidoc" pofile="po/introduction.po"
 	#PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE)  -f text -m target/classes/introduction/the-neo4j-graphdb.txt -l introduction/the-neo4j-graphdb.asciidoc -p po/the-neo4j-graphdb.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
 	#PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE)  -f text -m target/classes/introduction/what-is-a-graphdb.txt -l introduction/what-is-a-graphdb.asciidoc -p po/what-is-a-graphdb.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
 	#PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE)  -f text -m target/classes/introduction/highlights.txt -l introduction/highlights.asciidoc -p po/highlights.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
