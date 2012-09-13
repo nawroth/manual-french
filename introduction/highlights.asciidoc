@@ -1,6 +1,5 @@
 [[introduction-highlights]]
-Points forts de Neo4j
-=====================
+= Points forts de Neo4j =
 
 Définie comme une base de données robuste, évolutive et très performante, Neo4j convient aussi bien pour le deploiement en grande entreprise que pour les projets plus légers en utilisant une partie du serveur complet.
 

@@ -3,6 +3,7 @@
 # Note: requires mvn to unpack some stuff first.
 
 PROJECTNAME      = manual-french
+LANGUAGE         = fr
 BUILDDIR         = $(CURDIR)/target
 TOOLSDIR         = $(BUILDDIR)/tools
 SRCDIR           = $(CURDIR)
@@ -45,6 +46,7 @@ PO4A             = $(PO4ADIR)/po4a
 PO4AGETTEXTIZE   = $(PO4ADIR)/po4a-gettextize
 PO4ATRANSLATE    = $(PO4ADIR)/po4a-translate
 TMPPO            = $(BUILDDIR)/tmp.po
+PODIR            = $(CURDIR)/po
 
 
 ifdef VERBOSE
@@ -157,13 +159,13 @@ translate:
 gettextize:
 	if [ -z "$(original)" ]; then echo "Missing parameter 'original'."; exit 1; fi
 	if [ -z "$(translation)" ]; then echo "Missing parameter 'translation'."; exit 1; fi
-	if [ -z "$(pofile)" ]; then echo "Missing parameter 'pofile'."; exit 1; fi
+	if [ -z "$(part)" ]; then echo "Missing parameter 'part'."; exit 1; fi
+	if [ -z "$(target)" ]; then echo "Missing parameter 'target'."; exit 1; fi
 	PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE) -f text -m "$(original)" -l "$(translation)" -p "$(TMPPO)" -o asciidoc -L UTF-8 -M UTF-8
-	msginit -i "$(TMPPO)" -o "$(TMPPO)" --locale "fr" --no-translator 
-	msgcat -o "$(pofile)" "$(pofile)" "$(TMPPO)"
-	#make gettextize original="target/classes/introduction/the-neo4j-graphdb.txt" translation="introduction/the-neo4j-graphdb.asciidoc" pofile="po/introduction.po"
-	#PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE)  -f text -m target/classes/introduction/the-neo4j-graphdb.txt -l introduction/the-neo4j-graphdb.asciidoc -p po/the-neo4j-graphdb.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
-	#PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE)  -f text -m target/classes/introduction/what-is-a-graphdb.txt -l introduction/what-is-a-graphdb.asciidoc -p po/what-is-a-graphdb.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
-	#PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE)  -f text -m target/classes/introduction/highlights.txt -l introduction/highlights.asciidoc -p po/highlights.txt.po -o asciidoc -o tabs=verbatim -L UTF-8 -M UTF-8
+	msginit -i "$(TMPPO)" -o "$(TMPPO)" --locale "$(LANGUAGE)" --no-translator
+	touch "$(PODIR)/$(part).po"
+	msgcat -o "$(PODIR)/$(part).po" "$(PODIR)/$(part).po" "$(TMPPO)"
+	echo "[type: asciidoc] $(original) $(LANGUAGE):$(target)" >> "$(PODIR)/$(part).conf"
+	#make gettextize original="target/classes/introduction/the-neo4j-graphdb.txt" translation="introduction/the-neo4j-graphdb.asciidoc" part="introduction" target="target/generated/introduction/the-neo4j-graphdb.asciidoc"
 
 

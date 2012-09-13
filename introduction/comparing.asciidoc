@@ -1,6 +1,5 @@
 [[tutorial-comparing-models]]
-Comparaison des modèles de données
-==================================
+= Comparaison des modèles de données =
 
 Une base de données Graph stocke les données structurées dans les Noeuds et Relatins d'un graphe.
 Comment cela est-il comparé à d'autres modèles de persistance?
@@ -23,6 +22,7 @@ Un modèle Clé-Valeur est très bien pour la recherche de simples valeurs ou de
 Quand ces valeurs sont elle-mêmes interconnectées, vous obtenez un graphe.
 Neo4j vous laisse concevoir une simple structure de données en structure données interconnectées et plus complexes.
 
+.DUMMY HEADING TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
 image::graphdb-compare-kvstore.svg[]
 
 +K*+ représente une clé, +V*+ une valeur.

@@ -1,6 +1,5 @@
 [[introduction]]
-Introduction
-============
+= Introduction =
 
 [partintro]
 --
@@ -12,8 +11,7 @@ Cette partie offre un aperçu de ce qu'est une base de données graphe et soulig
 include::highlights.asciidoc[]
 
 [[graphdb-concepts]]
-Concepts d'une base de données graphe
-=====================================
+= Concepts d'une base de données graphe =
 
 Ce chapitre contient une introduction au modèle de données en graphe et le compare également à d'autres modèles de données utilisés pour la persistance de données.
 
