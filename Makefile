@@ -90,7 +90,7 @@ ASCIIDOC_FLAGS = $(V) $(VERS) $(GITVERS) $(IMPDIR)
 
 A2X_FLAGS = $(K) $(ASCIIDOC_FLAGS)
 
-.PHONY: preview help translate gettextize
+.PHONY: preview help translate gettextize refresh
 
 help:
 	@echo "Please use 'make <target>' where <target> is one of"
@@ -155,6 +155,10 @@ simple-asciidoc: initialize installextensions
 translate:
 	# running po4a
 	PERLLIB=$(PO4ALIB) $(PO4ATRANSLATE)  -f text -m target/classes/introduction/the-neo4j-graphdb.txt -p po/introduction.po -l target/generated/introduction/the-neo4j-graphdb.asciidoc -o asciidoc -L UTF-8 -M UTF-8
+
+refresh:
+	# running po4a
+	PERLLIB=$(PO4ALIB) $(PO4A) "po/introduction.conf"
 
 gettextize:
 	if [ -z "$(original)" ]; then echo "Missing parameter 'original'."; exit 1; fi
