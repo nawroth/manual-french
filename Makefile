@@ -2,6 +2,8 @@
 #
 # Note: requires mvn to unpack some stuff first.
 
+SHELL = /bin/bash
+
 PROJECTNAME      = manual-french
 LANGUAGE         = fr
 BUILDDIR         = $(CURDIR)/target
@@ -91,7 +93,7 @@ ASCIIDOC_FLAGS = $(V) $(VERS) $(GITVERS) $(IMPDIR)
 
 A2X_FLAGS = $(K) $(ASCIIDOC_FLAGS)
 
-.PHONY: preview help gettextize refresh
+.PHONY: preview help add refresh
 
 help:
 	@echo "Please use 'make <target>' where <target> is one of"
@@ -168,7 +170,8 @@ copytranslated:
 	# Copy translated documents.
 	#
 	mkdir -p "$(TRANSLATEDDIR)"
-	rsync -r --exclude="target" --exclude="conf" --exclude="po" "$(SRCDIR)/"* "$(TRANSLATEDDIR)/classes"
+	rsync -r "$(SRCDIR)/resources/"* "$(TRANSLATEDDIR)/classes"
+	#rsync -r "$(SRCDIR)/docs/"* "$(TRANSLATEDDIR)/docs"
 
 refresh:
 	#
@@ -176,19 +179,22 @@ refresh:
 	#
 	PERLLIB=$(PO4ALIB) $(PO4A) -f --keep 0 "po/introduction.conf"
 
-gettextize:
+add:
 	#
 	# Add an aldready translated document to a po file.
 	#
+	# Note that the translated file has to have the same
+	# structure as the original.
+	#
 	if [ -z "$(original)" ]; then echo "Missing parameter 'original'."; exit 1; fi
-	if [ -z "$(translation)" ]; then echo "Missing parameter 'translation'."; exit 1; fi
 	if [ -z "$(part)" ]; then echo "Missing parameter 'part'."; exit 1; fi
-	if [ -z "$(target)" ]; then echo "Missing parameter 'target'."; exit 1; fi
+	target="$(TRANSLATEDDIR)/$(original)"
+	translated="$(CURDIR)/$(original)"
+	original="$(BUILDDIR)/$(original)"
 	PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE) -f text -m "$(original)" -l "$(translation)" -p "$(TMPPO)" -o asciidoc -L UTF-8 -M UTF-8
 	msginit -i "$(TMPPO)" -o "$(TMPPO)" --locale "$(LANGUAGE)" --no-translator
 	touch "$(PODIR)/$(part).po"
 	msgcat -o "$(PODIR)/$(part).po" "$(PODIR)/$(part).po" "$(TMPPO)"
 	echo "[type: asciidoc] $(original) $(LANGUAGE):$(target)" >> "$(PODIR)/$(part).conf"
-	#make gettextize original="target/classes/introduction/the-neo4j-graphdb.txt" translation="introduction/the-neo4j-graphdb.asciidoc" part="introduction" target="target/generated/introduction/the-neo4j-graphdb.asciidoc"
-
+	#make add original="classes/introduction/the-neo4j-graphdb.asciidoc" part="introduction"
 
