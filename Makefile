@@ -8,9 +8,11 @@ BUILDDIR         = $(CURDIR)/target
 TOOLSDIR         = $(BUILDDIR)/tools
 SRCDIR           = $(CURDIR)
 RESOURCEDIR      = $(BUILDDIR)/classes
-SRCFILE          = $(SRCDIR)/$(PROJECTNAME).asciidoc
-IMGDIR           = $(SRCDIR)/images
-IMGTARGETDIR     = $(BUILDDIR)/classes/images
+TRANSLATEDDIR    = $(BUILDDIR)/translated
+TRANSRESOURCEDIR = $(TRANSLATEDDIR)/classes
+SRCFILE          = $(TRANSRESOURCEDIR)/$(PROJECTNAME).asciidoc
+IMGDIR           = $(TRANSRESOURCEDIR)/images
+IMGTARGETDIR     = $(TRANSRESOURCEDIR)/images
 CSSDIR           = $(TOOLSDIR)/main/resources/css
 JSDIR            = $(TOOLSDIR)/main/resources/js
 CONFDIR          = $(SRCDIR)/conf
@@ -48,7 +50,6 @@ PO4ATRANSLATE    = $(PO4ADIR)/po4a-translate
 TMPPO            = $(BUILDDIR)/tmp.po
 PODIR            = $(CURDIR)/po
 
-
 ifdef VERBOSE
 	V = -v
 	VA = VERBOSE=1
@@ -68,8 +69,8 @@ endif
 ifdef IMPORTDIR
 	IMPDIR = --attribute importdir="$(IMPORTDIR)"
 else
-	IMPDIR = --attribute importdir="$(BUILDDIR)/docs"
-	IMPORTDIR = "$(BUILDDIR)/docs"
+	IMPDIR = --attribute importdir="$(TRANSLATEDDIR)/docs"
+	IMPORTDIR = "$(TRANSLATEDDIR)/docs"
 endif
 
 ifneq (,$(findstring SNAPSHOT,$(VERSNUM)))
@@ -90,7 +91,7 @@ ASCIIDOC_FLAGS = $(V) $(VERS) $(GITVERS) $(IMPDIR)
 
 A2X_FLAGS = $(K) $(ASCIIDOC_FLAGS)
 
-.PHONY: preview help translate gettextize refresh
+.PHONY: preview help gettextize refresh
 
 help:
 	@echo "Please use 'make <target>' where <target> is one of"
@@ -138,7 +139,7 @@ installextensions: initialize
 	mkdir -p $(EXTENSIONDEST)
 	cp -fr "$(EXTENSIONSRC)/"* $(EXTENSIONDEST)
 
-simple-asciidoc: initialize installextensions
+simple-asciidoc: initialize installextensions prepare
 	#
 	#
 	# Building HTML straight from the AsciiDoc sources.
@@ -148,19 +149,37 @@ simple-asciidoc: initialize installextensions
 	mkdir -p "$(SINGLEHTMLDIR)/css"
 	mkdir -p "$(SINGLEHTMLDIR)/js"
 	"$(ASCIIDOC)" $(ASCIIDOC_FLAGS) --conf-file="$(TOOLSCONFDIR)/asciidoc.conf"  --conf-file="$(CONFDIR)/asciidoc.conf" --attribute docinfo1 --attribute toc --out-file "$(SINGLEHTMLFILE)" "$(SRCFILE)"
-	cp -ru "$(IMGTARGETDIR)/"* "$(SINGLEHTMLDIR)/images"
-	cp -ru "$(CSSDIR)/"* "$(SINGLEHTMLDIR)/css"
-	cp -ru "$(JSDIR)/"* "$(SINGLEHTMLDIR)/js"
+	rsync -ru "$(IMGTARGETDIR)/"* "$(SINGLEHTMLDIR)/images"
+	rsync -ru "$(CSSDIR)/"* "$(SINGLEHTMLDIR)/css"
+	rsync -ru "$(JSDIR)/"* "$(SINGLEHTMLDIR)/js"
 
-translate:
-	# running po4a
-	PERLLIB=$(PO4ALIB) $(PO4ATRANSLATE)  -f text -m target/classes/introduction/the-neo4j-graphdb.txt -p po/introduction.po -l target/generated/introduction/the-neo4j-graphdb.asciidoc -o asciidoc -L UTF-8 -M UTF-8
+prepare: copyoriginal copytranslated refresh
+
+copyoriginal:
+	#
+	# Copy original.
+	#
+	mkdir -p "$(TRANSLATEDDIR)"
+	rsync -ru "$(BUILDDIR)/classes/"* "$(TRANSLATEDDIR)/classes"
+	rsync -ru "$(BUILDDIR)/docs/"* "$(TRANSLATEDDIR)/docs"
+
+copytranslated:
+	#
+	# Copy translated documents.
+	#
+	mkdir -p "$(TRANSLATEDDIR)"
+	rsync -r --exclude="target" --exclude="conf" --exclude="po" "$(SRCDIR)/"* "$(TRANSLATEDDIR)/classes"
 
 refresh:
-	# running po4a
-	PERLLIB=$(PO4ALIB) $(PO4A) "po/introduction.conf"
+	#
+	# Refresh translations from po files  and po files from originals.
+	#
+	PERLLIB=$(PO4ALIB) $(PO4A) -f --keep 0 "po/introduction.conf"
 
 gettextize:
+	#
+	# Add an aldready translated document to a po file.
+	#
 	if [ -z "$(original)" ]; then echo "Missing parameter 'original'."; exit 1; fi
 	if [ -z "$(translation)" ]; then echo "Missing parameter 'translation'."; exit 1; fi
 	if [ -z "$(part)" ]; then echo "Missing parameter 'part'."; exit 1; fi
