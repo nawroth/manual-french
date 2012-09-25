@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2012-09-24 16:27+0300\n"
-"PO-Revision-Date: 2012-09-24 17:39+0200\n"
+"PO-Revision-Date: 2012-09-25 08:34+0200\n"
 "Last-Translator: Anders Nawroth <docs@neo4j.org>\n"
 "Language-Team: French <https://github.com/neo4j/manual-french>\n"
 "Language: fr\n"
@@ -581,7 +581,7 @@ msgstr ""
 
 #. type: Block title
 #: target/classes/introduction/comparing.asciidoc:32
-#, no-wrap
+#, fuzzy, no-wrap
 msgid "Graph Database as Key-Value Store"
 msgstr "Graph Database as Key-Value Store"
 
@@ -634,7 +634,7 @@ msgstr ""
 
 #. type: Block title
 #: target/classes/introduction/comparing.asciidoc:48
-#, no-wrap
+#, fuzzy, no-wrap
 msgid "Document Store"
 msgstr "Document Store"
 
@@ -654,7 +654,7 @@ msgstr ""
 
 #. type: Block title
 #: target/classes/introduction/comparing.asciidoc:53
-#, no-wrap
+#, fuzzy, no-wrap
 msgid "Graph Database as Document Store"
 msgstr "Graph Database as Document Store"
 
