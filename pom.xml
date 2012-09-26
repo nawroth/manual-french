@@ -85,6 +85,7 @@
             <configuration>
               <executable>make</executable>
               <arguments>
+                <argument>init</argument>
                 <argument>preview</argument>
                 <argument>VERSION=${project.version}</argument>
                 <argument>IMPORTDIR=${docs.importdir}</argument>

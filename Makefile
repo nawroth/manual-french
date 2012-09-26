@@ -2,16 +2,21 @@
 #
 # Note: requires mvn to unpack some stuff first.
 
-SHELL = /bin/bash
-
+# Project Configuration
 PROJECTNAME      = manual-french
 LANGUAGE         = fr
-BUILDDIR         = $(CURDIR)/target
+
+# Build Configuration
+STATIC           = src
+ORIGINALSTATIC   = classes
+IMPORTED         = docs
+TARGET           = target
+ORIGINAL         = original
+#
+BUILDDIR         = $(CURDIR)/$(TARGET)
 TOOLSDIR         = $(BUILDDIR)/tools
 SRCDIR           = $(CURDIR)
-STATIC           = "classes"
-IMPORTED         = "docs"
-ORIGINALDIR      = $(BUILDDIR)/original
+ORIGINALDIR      = $(BUILDDIR)/$(ORIGINAL)
 RESOURCEDIR      = $(BUILDDIR)/$(STATIC)
 SRCFILE          = $(RESOURCEDIR)/$(PROJECTNAME).asciidoc
 IMGDIR           = $(RESOURCEDIR)/images
@@ -52,6 +57,9 @@ PO4AGETTEXTIZE   = $(PO4ADIR)/po4a-gettextize
 PO4ATRANSLATE    = $(PO4ADIR)/po4a-translate
 TMPPO            = $(BUILDDIR)/tmp.po
 PODIR            = $(CURDIR)/po
+
+SHELL = /bin/bash
+
 
 ifdef VERBOSE
 	V = -v
@@ -94,7 +102,7 @@ ASCIIDOC_FLAGS = $(V) $(VERS) $(GITVERS) $(IMPDIR)
 
 A2X_FLAGS = $(K) $(ASCIIDOC_FLAGS)
 
-.PHONY: preview help add refresh
+.PHONY: preview help add refresh init
 
 help:
 	@echo "Please use 'make <target>' where <target> is one of"
@@ -106,7 +114,9 @@ help:
 
 #dist: installfilter offline-html html html-check text text-check pdf manpages upgrade cleanup yearcheck
 
-preview: initialize installextensions simple-asciidoc
+preview: copyoriginal copytranslated refresh simple-asciidoc
+
+init: initialize installextensions
 
 cleanup:
 	#
@@ -140,6 +150,10 @@ initialize:
 		rm -rf "$(BUILDDIR)/test-sources";\
 		mv "$(ORIGINALDIR)/test-sources" "$(BUILDDIR)/test-sources";\
 	fi
+	if [ -d "$(ORIGINALDIR)/$(ORIGINALSTATIC)/" ]; then \
+		rm -rf "$(ORIGINALDIR)/$(STATIC)";\
+		mv "$(ORIGINALDIR)/$(ORIGINALSTATIC)" "$(ORIGINALDIR)/$(STATIC)";\
+	fi
 
 installextensions: initialize
 	#
@@ -150,7 +164,7 @@ installextensions: initialize
 	mkdir -p $(EXTENSIONDEST)
 	cp -fr "$(EXTENSIONSRC)/"* $(EXTENSIONDEST)
 
-simple-asciidoc: initialize installextensions prepare
+simple-asciidoc: copyoriginal copytranslated refresh
 	#
 	#
 	# Building HTML straight from the AsciiDoc sources.
@@ -163,8 +177,6 @@ simple-asciidoc: initialize installextensions prepare
 	rsync -ru "$(IMGTARGETDIR)/"* "$(SINGLEHTMLDIR)/images"
 	rsync -ru "$(CSSDIR)/"* "$(SINGLEHTMLDIR)/css"
 	rsync -ru "$(JSDIR)/"* "$(SINGLEHTMLDIR)/js"
-
-prepare: copyoriginal copytranslated refresh
 
 copyoriginal:
 	#
@@ -185,23 +197,36 @@ refresh:
 	# Refresh translations from po files  and po files from originals.
 	#
 	PERLLIB=$(PO4ALIB) $(PO4A) -f --keep 0 "po/introduction.conf"
+	PERLLIB=$(PO4ALIB) $(PO4A) -f --keep 0 "po/qanda.conf"
 
 add:
 	#
-	# Add an aldready translated document to a po file.
+	# Add a new document to a po file.
 	#
 	# Note that the translated file has to have the same
 	# structure as the original.
+	# Usage:
+	# make add document="classes/introduction/the-neo4j-graphdb.asciidoc" part="introduction"
 	#
-	if [ -z "$(target)" ]; then echo "Missing parameter 'target'."; exit 1; fi
+	if [ -z "$(document)" ]; then echo "Missing parameter 'document'."; exit 1; fi
 	if [ -z "$(part)" ]; then echo "Missing parameter 'part'."; exit 1; fi
-	target="$(BUILDDIR)/$(target)"
-	translated="$(CURDIR)/$(target)"
-	original="$(ORIGINALDIR)/$(target)"
-	PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE) -f text -m "$(original)" -l "$(translation)" -p "$(TMPPO)" -o asciidoc -L UTF-8 -M UTF-8
+	$(eval target="$(TARGET)/$(document)")
+	$(eval translated="$(document)")
+	$(eval original="$(TARGET)/$(ORIGINAL)/$(document)")
+	$(eval options=-f text -o asciidoc -L UTF-8 -M UTF-8)
+	if [ -f "$(translated)" ]; then \
+		PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE) $(options) -m $(original) -p "$(TMPPO)" -l $(translated);\
+		else \
+		PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE) $(options) -m $(original) -p "$(TMPPO)";\
+	fi
 	msginit -i "$(TMPPO)" -o "$(TMPPO)" --locale "$(LANGUAGE)" --no-translator
 	touch "$(PODIR)/$(part).po"
 	msgcat -o "$(PODIR)/$(part).po" "$(PODIR)/$(part).po" "$(TMPPO)"
+	if [ ! -f "$(PODIR)/$(part).conf" ]; then \
+		echo "[po4a_paths] $(TARGET)/pot/$(part).pot fr:po/$(part).po" >> "$(PODIR)/$(part).conf";\
+		echo "[po4a_alias: asciidoc] text opt:\"-o asciidoc\"" >> "$(PODIR)/$(part).conf";\
+		echo "[options] opt: \"-L UTF-8 -M UTF-8 -A UTF-8\"" >> "$(PODIR)/$(part).conf";\
+	fi
 	echo "[type: asciidoc] $(original) $(LANGUAGE):$(target)" >> "$(PODIR)/$(part).conf"
-	#make add target="classes/introduction/the-neo4j-graphdb.asciidoc" part="introduction"
+	# Document was added!
 

@@ -1,7 +1,6 @@
 [[questions]]
 [appendix]
-Questions & Réponses
-====================
+= Questions & Réponses =
 
 [qanda]
 
@@ -105,10 +104,8 @@ Comment utiliser la journalisation?::
 Comment est-ce que j'optimise Neo4j pour la performance?::
         Utilisation de fichiers de mémoire en accès linéaire (memory-mapped)
         Les stratégies de mise en cache de Neo4j doivent être expliquées:
-        * Soft-ref cache: Les soft references sont effacées quand le GC ** pense que c'est nécessaire. A utiliser si la charge de l'application n'est
-        pas très grande et qu'on a besoin d'un cache soignant la mémoire.
-        * Weak-ref cache: Le GC efface les weak references quand il en trouve. A utiliser si l'application est soumise à une forte charge avec un 
-        grand nombre de lectures et de traversées.
+        * Soft-ref cache: Les soft references sont effacées quand le GC pense que c'est nécessaire. A utiliser si la charge de l'application n'est pas très grande et qu'on a besoin d'un cache soignant la mémoire.
+        * Weak-ref cache: Le GC efface les weak references quand il en trouve. A utiliser si l'application est soumise à une forte charge avec un grand nombre de lectures et de traversées.
         * Strong-ref cache: Tous les noeuds et relations sont mises dans le cache mémoire.
         JVM a besoin d'une pause après une forte charge, par exemple 1/2 minutes d'intervalle.
         Des heap sizes larges sont bons, sinon 12G et plus ne sont pas pratiques avec le GC.
