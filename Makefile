@@ -9,8 +9,10 @@ LANGUAGE         = fr
 BUILDDIR         = $(CURDIR)/target
 TOOLSDIR         = $(BUILDDIR)/tools
 SRCDIR           = $(CURDIR)
+STATIC           = "classes"
+IMPORTED         = "docs"
 ORIGINALDIR      = $(BUILDDIR)/original
-RESOURCEDIR      = $(BUILDDIR)/classes
+RESOURCEDIR      = $(BUILDDIR)/$(STATIC)
 SRCFILE          = $(RESOURCEDIR)/$(PROJECTNAME).asciidoc
 IMGDIR           = $(RESOURCEDIR)/images
 IMGTARGETDIR     = $(RESOURCEDIR)/images
@@ -70,8 +72,8 @@ endif
 ifdef IMPORTDIR
 	IMPDIR = --attribute importdir="$(IMPORTDIR)"
 else
-	IMPDIR = --attribute importdir="$(BUILDDIR)/docs"
-	IMPORTDIR = "$(BUILDDIR)/docs"
+	IMPDIR = --attribute importdir="$(BUILDDIR)/$(IMPORTED)"
+	IMPORTDIR = "$(BUILDDIR)/$(IMPORTED)"
 endif
 
 ifneq (,$(findstring SNAPSHOT,$(VERSNUM)))
@@ -125,13 +127,19 @@ endif
 initialize:
 	#
 	#
-	# Setting correct file permissions.
+	# Setting correct file permissions and moving source code.
 	#
 	#
 	find $(TOOLSDIR) \( -path '*.py' -o -path '*.sh' \) -exec chmod 0755 {} \;
 	find $(PO4ADIR) \( -path '*po4a' -o -path '*po4a-*' \) -exec chmod 0755 {} \;
-	rsync -ru "$(ORIGINALDIR)/sources/"* "$(BUILDDIR)/sources"
-	rsync -ru "$(ORIGINALDIR)/test-sources/"* "$(BUILDDIR)/test-sources"
+	if [ -d "$(ORIGINALDIR)/sources/" ]; then \
+		rm -rf "$(BUILDDIR)/sources";\
+		mv "$(ORIGINALDIR)/sources" "$(BUILDDIR)/sources";\
+	fi
+	if [ -d "$(ORIGINALDIR)/test-sources/" ]; then \
+		rm -rf "$(BUILDDIR)/test-sources";\
+		mv "$(ORIGINALDIR)/test-sources" "$(BUILDDIR)/test-sources";\
+	fi
 
 installextensions: initialize
 	#
@@ -162,15 +170,15 @@ copyoriginal:
 	#
 	# Copy original.
 	#
-	rsync -ru "$(ORIGINALDIR)/classes/"* "$(BUILDDIR)/classes"
-	rsync -ru "$(ORIGINALDIR)/docs/"* "$(BUILDDIR)/docs"
+	rsync -ru "$(ORIGINALDIR)/$(STATIC)/"* "$(BUILDDIR)/$(STATIC)"
+	rsync -ru "$(ORIGINALDIR)/$(IMPORTED)/"* "$(BUILDDIR)/$(IMPORTED)"
 
 copytranslated:
 	#
 	# Copy translated documents.
 	#
-	if [ -d "$(SRCDIR)/classes/" ]; then rsync -r "$(SRCDIR)/classes/"* "$(BUILDDIR)/classes"; fi
-	if [ -d "$(SRCDIR)/docs/" ]; then rsync -r "$(SRCDIR)/docs/"* "$(BUILDDIR)/docs"; fi
+	if [ -d "$(SRCDIR)/$(STATIC)/" ]; then rsync -r "$(SRCDIR)/$(STATIC)/"* "$(BUILDDIR)/$(STATIC)"; fi
+	if [ -d "$(SRCDIR)/$(IMPORTED)/" ]; then rsync -r "$(SRCDIR)/$(IMPORTED)/"* "$(BUILDDIR)/$(IMPORTED)"; fi
 
 refresh:
 	#
@@ -195,5 +203,5 @@ add:
 	touch "$(PODIR)/$(part).po"
 	msgcat -o "$(PODIR)/$(part).po" "$(PODIR)/$(part).po" "$(TMPPO)"
 	echo "[type: asciidoc] $(original) $(LANGUAGE):$(target)" >> "$(PODIR)/$(part).conf"
-	#make add original="classes/introduction/the-neo4j-graphdb.asciidoc" part="introduction"
+	#make add target="classes/introduction/the-neo4j-graphdb.asciidoc" part="introduction"
 
