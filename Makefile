@@ -9,12 +9,11 @@ LANGUAGE         = fr
 BUILDDIR         = $(CURDIR)/target
 TOOLSDIR         = $(BUILDDIR)/tools
 SRCDIR           = $(CURDIR)
+ORIGINALDIR      = $(BUILDDIR)/original
 RESOURCEDIR      = $(BUILDDIR)/classes
-TRANSLATEDDIR    = $(BUILDDIR)/translated
-TRANSRESOURCEDIR = $(TRANSLATEDDIR)/classes
-SRCFILE          = $(TRANSRESOURCEDIR)/$(PROJECTNAME).asciidoc
-IMGDIR           = $(TRANSRESOURCEDIR)/images
-IMGTARGETDIR     = $(TRANSRESOURCEDIR)/images
+SRCFILE          = $(RESOURCEDIR)/$(PROJECTNAME).asciidoc
+IMGDIR           = $(RESOURCEDIR)/images
+IMGTARGETDIR     = $(RESOURCEDIR)/images
 CSSDIR           = $(TOOLSDIR)/main/resources/css
 JSDIR            = $(TOOLSDIR)/main/resources/js
 CONFDIR          = $(SRCDIR)/conf
@@ -71,8 +70,8 @@ endif
 ifdef IMPORTDIR
 	IMPDIR = --attribute importdir="$(IMPORTDIR)"
 else
-	IMPDIR = --attribute importdir="$(TRANSLATEDDIR)/docs"
-	IMPORTDIR = "$(TRANSLATEDDIR)/docs"
+	IMPDIR = --attribute importdir="$(BUILDDIR)/docs"
+	IMPORTDIR = "$(BUILDDIR)/docs"
 endif
 
 ifneq (,$(findstring SNAPSHOT,$(VERSNUM)))
@@ -131,6 +130,8 @@ initialize:
 	#
 	find $(TOOLSDIR) \( -path '*.py' -o -path '*.sh' \) -exec chmod 0755 {} \;
 	find $(PO4ADIR) \( -path '*po4a' -o -path '*po4a-*' \) -exec chmod 0755 {} \;
+	rsync -ru "$(ORIGINALDIR)/sources/"* "$(BUILDDIR)/sources"
+	rsync -ru "$(ORIGINALDIR)/test-sources/"* "$(BUILDDIR)/test-sources"
 
 installextensions: initialize
 	#
@@ -161,17 +162,15 @@ copyoriginal:
 	#
 	# Copy original.
 	#
-	mkdir -p "$(TRANSLATEDDIR)"
-	rsync -ru "$(BUILDDIR)/classes/"* "$(TRANSLATEDDIR)/classes"
-	rsync -ru "$(BUILDDIR)/docs/"* "$(TRANSLATEDDIR)/docs"
+	rsync -ru "$(ORIGINALDIR)/classes/"* "$(BUILDDIR)/classes"
+	rsync -ru "$(ORIGINALDIR)/docs/"* "$(BUILDDIR)/docs"
 
 copytranslated:
 	#
 	# Copy translated documents.
 	#
-	mkdir -p "$(TRANSLATEDDIR)"
-	rsync -r "$(SRCDIR)/resources/"* "$(TRANSLATEDDIR)/classes"
-	#rsync -r "$(SRCDIR)/docs/"* "$(TRANSLATEDDIR)/docs"
+	if [ -d "$(SRCDIR)/classes/" ]; then rsync -r "$(SRCDIR)/classes/"* "$(BUILDDIR)/classes"; fi
+	if [ -d "$(SRCDIR)/docs/" ]; then rsync -r "$(SRCDIR)/docs/"* "$(BUILDDIR)/docs"; fi
 
 refresh:
 	#
@@ -186,11 +185,11 @@ add:
 	# Note that the translated file has to have the same
 	# structure as the original.
 	#
-	if [ -z "$(original)" ]; then echo "Missing parameter 'original'."; exit 1; fi
+	if [ -z "$(target)" ]; then echo "Missing parameter 'target'."; exit 1; fi
 	if [ -z "$(part)" ]; then echo "Missing parameter 'part'."; exit 1; fi
-	target="$(TRANSLATEDDIR)/$(original)"
-	translated="$(CURDIR)/$(original)"
-	original="$(BUILDDIR)/$(original)"
+	target="$(BUILDDIR)/$(target)"
+	translated="$(CURDIR)/$(target)"
+	original="$(ORIGINALDIR)/$(target)"
 	PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE) -f text -m "$(original)" -l "$(translation)" -p "$(TMPPO)" -o asciidoc -L UTF-8 -M UTF-8
 	msginit -i "$(TMPPO)" -o "$(TMPPO)" --locale "$(LANGUAGE)" --no-translator
 	touch "$(PODIR)/$(part).po"

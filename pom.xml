@@ -18,8 +18,8 @@
   <properties>
     <neo4j.version>${project.version}</neo4j.version>
     <docs.tools>${project.build.directory}/tools</docs.tools>
-    <docs.upstream>${project.build.directory}</docs.upstream>
-    <docs.translated>${project.build.directory}/translated</docs.translated>
+    <docs.upstream>${project.build.directory}/original</docs.upstream>
+    <docs.translated>${project.build.directory}</docs.translated>
     <docs.importdir>${docs.translated}/docs</docs.importdir>
     <docs-plugin.skip>true</docs-plugin.skip>
   </properties>
