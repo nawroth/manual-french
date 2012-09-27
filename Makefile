@@ -12,6 +12,7 @@ ORIGINALSTATIC   = classes
 IMPORTED         = docs
 TARGET           = target
 ORIGINAL         = original
+PO               = po
 #
 BUILDDIR         = $(CURDIR)/$(TARGET)
 TOOLSDIR         = $(BUILDDIR)/tools
@@ -30,6 +31,7 @@ DOCBOOKFILEHTML  = $(BUILDDIR)/$(PROJECTNAME)-html.xml
 FOPDIR           = $(BUILDDIR)/pdf
 FOPFILE          = $(FOPDIR)/$(PROJECTNAME).fo
 FOPPDF           = $(FOPDIR)/$(PROJECTNAME).pdf
+PARTSMAKE        = $(CURDIR)/parts.make
 TEXTWIDTH        = 80
 TEXTDIR          = $(BUILDDIR)/text
 TEXTFILE         = $(TEXTDIR)/$(PROJECTNAME).txt
@@ -56,7 +58,7 @@ PO4A             = $(PO4ADIR)/po4a
 PO4AGETTEXTIZE   = $(PO4ADIR)/po4a-gettextize
 PO4ATRANSLATE    = $(PO4ADIR)/po4a-translate
 TMPPO            = $(BUILDDIR)/tmp.po
-PODIR            = $(CURDIR)/po
+PODIR            = $(CURDIR)/$(PO)
 
 SHELL = /bin/bash
 
@@ -192,12 +194,10 @@ copytranslated:
 	if [ -d "$(SRCDIR)/$(STATIC)/" ]; then rsync -r "$(SRCDIR)/$(STATIC)/"* "$(BUILDDIR)/$(STATIC)"; fi
 	if [ -d "$(SRCDIR)/$(IMPORTED)/" ]; then rsync -r "$(SRCDIR)/$(IMPORTED)/"* "$(BUILDDIR)/$(IMPORTED)"; fi
 
-refresh:
-	#
-	# Refresh translations from po files  and po files from originals.
-	#
-	PERLLIB=$(PO4ALIB) $(PO4A) -f --keep 0 "po/introduction.conf"
-	PERLLIB=$(PO4ALIB) $(PO4A) -f --keep 0 "po/qanda.conf"
+#
+# include the refresh rule.
+#
+include $(PARTSMAKE)
 
 add:
 	#
@@ -206,7 +206,7 @@ add:
 	# Note that the translated file has to have the same
 	# structure as the original.
 	# Usage:
-	# make add document="classes/introduction/the-neo4j-graphdb.asciidoc" part="introduction"
+	# make add document="src/introduction/the-neo4j-graphdb.asciidoc" part="introduction"
 	#
 	if [ -z "$(document)" ]; then echo "Missing parameter 'document'."; exit 1; fi
 	if [ -z "$(part)" ]; then echo "Missing parameter 'part'."; exit 1; fi
@@ -223,10 +223,11 @@ add:
 	touch "$(PODIR)/$(part).po"
 	msgcat -o "$(PODIR)/$(part).po" "$(PODIR)/$(part).po" "$(TMPPO)"
 	if [ ! -f "$(PODIR)/$(part).conf" ]; then \
-		echo "[po4a_paths] $(TARGET)/pot/$(part).pot fr:po/$(part).po" >> "$(PODIR)/$(part).conf";\
+		echo "[po4a_paths] $(TARGET)/pot/$(part).pot fr:$(PO)/$(part).po" >> "$(PODIR)/$(part).conf";\
 		echo "[po4a_alias: asciidoc] text opt:\"-o asciidoc\"" >> "$(PODIR)/$(part).conf";\
 		echo "[options] opt: \"-L UTF-8 -M UTF-8 -A UTF-8\"" >> "$(PODIR)/$(part).conf";\
+		echo -e "\t"'PERLLIB=\u0024(PO4ALIB) \u0024(PO4A) -f --keep 0 "'"$(PO)/$(part).conf\"" >> "$(PARTSMAKE)";\
 	fi
 	echo "[type: asciidoc] $(original) $(LANGUAGE):$(target)" >> "$(PODIR)/$(part).conf"
-	# Document was added!
+	# Document was added (if this line is reached)!
 
