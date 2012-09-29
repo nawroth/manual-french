@@ -3,106 +3,115 @@
 # Note: requires mvn to unpack some stuff first.
 
 # Project Configuration
-PROJECTNAME      = manual-french
-LANGUAGE         = fr
+project_name               = manual-french
+language                   = fr
 
-# Build Configuration
-STATIC           = src
-ORIGINALSTATIC   = classes
-IMPORTED         = docs
-TARGET           = target
-ORIGINAL         = original
-PO               = po
+# Names
+main_source                = src
+legacy_main_source         = classes
+imported_source            = docs
+target                     = target
+original                   = original
+po                         = po
+# Source Directories
+source_dir                 = $(CURDIR)
+config_dir                 = $(source_dir)/conf
+build_dir                  = $(CURDIR)/$(target)
+build_source_dir           = $(build_dir)/$(main_source)
+build_image_dir            = $(build_source_dir)/images
+original_dir               = $(build_dir)/$(original)
+tools_dir                  = $(build_dir)/tools
+tools_config_dir           = $(tools_dir)/main/resources/conf
+tools_css_dir              = $(tools_dir)/main/resources/css
+tools_js_dir               = $(tools_dir)/main/resources/js
+extensions_source_dir      = $(tools_dir)/bin/extensions
+script_dir                 = $(tools_dir)/build
+asciidoc_dir               = $(tools_dir)/bin/asciidoc
+po4a_dir                   = $(tools_dir)/bin/po4a
+po4a_lib_dir               = $(po4a_dir)/lib
+po_dir                     = $(CURDIR)/$(po)
+make_dir                   = $(tools_dir)/make
 #
-BUILDDIR         = $(CURDIR)/$(TARGET)
-TOOLSDIR         = $(BUILDDIR)/tools
-SRCDIR           = $(CURDIR)
-ORIGINALDIR      = $(BUILDDIR)/$(ORIGINAL)
-RESOURCEDIR      = $(BUILDDIR)/$(STATIC)
-SRCFILE          = $(RESOURCEDIR)/$(PROJECTNAME).asciidoc
-IMGDIR           = $(RESOURCEDIR)/images
-IMGTARGETDIR     = $(RESOURCEDIR)/images
-CSSDIR           = $(TOOLSDIR)/main/resources/css
-JSDIR            = $(TOOLSDIR)/main/resources/js
-CONFDIR          = $(SRCDIR)/conf
-TOOLSCONFDIR     = $(TOOLSDIR)/main/resources/conf
-DOCBOOKFILE      = $(BUILDDIR)/$(PROJECTNAME)-shortinfo.xml
-DOCBOOKFILEHTML  = $(BUILDDIR)/$(PROJECTNAME)-html.xml
-FOPDIR           = $(BUILDDIR)/pdf
-FOPFILE          = $(FOPDIR)/$(PROJECTNAME).fo
-FOPPDF           = $(FOPDIR)/$(PROJECTNAME).pdf
-PARTSMAKE        = $(CURDIR)/parts.make
-TEXTWIDTH        = 80
-TEXTDIR          = $(BUILDDIR)/text
-TEXTFILE         = $(TEXTDIR)/$(PROJECTNAME).txt
-TEXTHTMLFILE     = $(TEXTFILE).html
-SINGLEHTMLDIR    = $(BUILDDIR)/html
-SINGLEHTMLFILE   = $(SINGLEHTMLDIR)/index.html
-ANNOTATEDDIR     = $(BUILDDIR)/annotated
-ANNOTATEDFILE    = $(HTMLDIR)/$(PROJECTNAME).html
-CHUNKEDHTMLDIR   = $(BUILDDIR)/chunked
-CHUNKEDOFFLINEHTMLDIR = $(BUILDDIR)/chunked-offline
-CHUNKEDTARGET     = $(BUILDDIR)/$(PROJECTNAME).chunked
-CHUNKEDSHORTINFOTARGET = $(BUILDDIR)/$(PROJECTNAME)-html.chunked
-MANPAGES         = $(BUILDDIR)/manpages
-UPGRADE          = $(BUILDDIR)/upgrade
-EXTENSIONSRC     = $(TOOLSDIR)/bin/extensions
-EXTENSIONDEST    = ~/.asciidoc
-SCRIPTDIR        = $(TOOLSDIR)/build
-ASCIDOCDIR       = $(TOOLSDIR)/bin/asciidoc
-ASCIIDOC         = $(ASCIDOCDIR)/asciidoc.py
-A2X              = $(ASCIDOCDIR)/a2x.py
-PO4ADIR          = $(TOOLSDIR)/bin/po4a
-PO4ALIB          = $(PO4ADIR)/lib
-PO4A             = $(PO4ADIR)/po4a
-PO4AGETTEXTIZE   = $(PO4ADIR)/po4a-gettextize
-PO4ATRANSLATE    = $(PO4ADIR)/po4a-translate
-TMPPO            = $(BUILDDIR)/tmp.po
-PODIR            = $(CURDIR)/$(PO)
+make_parts                 = $(CURDIR)/parts.make
+#
+source_document            = $(build_source_dir)/$(project_name).asciidoc
+#
+docbook_file               = $(build_dir)/$(project_name)-shortinfo.xml
+docbook_file_html          = $(build_dir)/$(project_name)-html.xml
+#
+fop_dir                    = $(build_dir)/pdf
+fop_file                   = $(fop_dir)/$(project_name).fo
+fop_pdf                    = $(fop_dir)/$(project_name).pdf
+#
+text_max_width             = 80
+text_dir                   = $(build_dir)/text
+text_file                  = $(text_dir)/$(project_name).txt
+text_html_file             = $(text_file).html
+#
+single_html_dir            = $(build_dir)/html
+single_html_file           = $(single_html_dir)/index.html
+#
+annotated_dir              = $(build_dir)/annotated
+annotated_file             = $(annotated_dir)/index.html
+#
+chunked_html_dir           = $(build_dir)/chunked
+chunked_offline_html_dir   = $(build_dir)/chunked-offline
+chunked_target             = $(build_dir)/$(project_name).chunked
+chunked_short_info_target  = $(build_dir)/$(project_name)-html.chunked
+#
+manpages_dir               = $(build_dir)/manpages
+upgrade_dir                = $(build_dir)/upgrade
+extensions_destination_dir = ~/.asciidoc
+asciidoc                   = $(asciidoc_dir)/asciidoc.py
+a2x                        = $(asciidoc_dir)/a2x.py
+po4a                       = $(po4a_dir)/po4a
+po4a_gettextize            = $(po4a_dir)/po4a-gettextize
+tmp_po                     = $(build_dir)/tmp.po
 
 SHELL = /bin/bash
 
+#include $(make_dir)/flags.make
+
 
 ifdef VERBOSE
-	V = -v
-	VA = VERBOSE=1
+	verbose_flag = -v
 endif
 
 ifdef KEEP
-	K = -k
-	KA = KEEP=1
+	keep_flag = -k
 endif
 
 ifdef VERSION
-	VERSNUM =$(VERSION)
+	version_number =$(VERSION)
 else
-	VERSNUM =-neo4j-version
+	version_number =-neo4j-version
 endif
 
 ifdef IMPORTDIR
-	IMPDIR = --attribute importdir="$(IMPORTDIR)"
+	import_dir_attribute = --attribute importdir="$(IMPORTDIR)"
 else
-	IMPDIR = --attribute importdir="$(BUILDDIR)/$(IMPORTED)"
-	IMPORTDIR = "$(BUILDDIR)/$(IMPORTED)"
+	import_dir_attribute = --attribute importdir="$(build_dir)/$(imported_source)"
+	IMPORTDIR = "$(build_dir)/$(imported_source)"
 endif
 
-ifneq (,$(findstring SNAPSHOT,$(VERSNUM)))
-	GITVERSNUM =master
+ifneq (,$(findstring SNAPSHOT,$(version_number)))
+	git_version_number =master
 else
-	GITVERSNUM =$(VERSION)
+	git_version_number =$(verbose_flagERSION)
 endif
 
 ifndef VERSION
-	GITVERSNUM =master
+	git_version_number =master
 endif
 
-VERS =  --attribute neo4j-version=$(VERSNUM)
+version_attribute =  --attribute neo4j-version=$(version_number)
 
-GITVERS = --attribute gitversion=$(GITVERSNUM)
+git_version_attribute = --attribute gitversion=$(git_version_number)
 
-ASCIIDOC_FLAGS = $(V) $(VERS) $(GITVERS) $(IMPDIR)
+asciidoc_flags = $(verbose_flag) $(version_attribute) $(git_version_attribute) $(import_dir_attribute)
 
-A2X_FLAGS = $(K) $(ASCIIDOC_FLAGS)
+a2x_flags = $(keep_flag) $(asciidoc_flags)
+
 
 .PHONY: preview help add refresh init
 
@@ -127,13 +136,13 @@ cleanup:
 	#
 	#
 ifndef KEEP
-	rm -f "$(DOCBOOKFILE)"
-	rm -f "$(BUILDDIR)/"*.xml
-	rm -f "$(ANNOTATEDDIR)/"*.xml
-	rm -f "$(FOPDIR)/images"
-	rm -f "$(FOPFILE)"
-	rm -f "$(UPGRADE)/"*.xml
-	rm -f "$(UPGRADE)/"*.html
+	rm -f "$(docbook_file)"
+	rm -f "$(build_dir)/"*.xml
+	rm -f "$(annotated_dir)/"*.xml
+	rm -f "$(fop_dir)/images"
+	rm -f "$(fop_file)"
+	rm -f "$(upgrade_dir)/"*.xml
+	rm -f "$(upgrade_dir)/"*.html
 endif
 
 initialize:
@@ -142,19 +151,19 @@ initialize:
 	# Setting correct file permissions and moving source code.
 	#
 	#
-	find $(TOOLSDIR) \( -path '*.py' -o -path '*.sh' \) -exec chmod 0755 {} \;
-	find $(PO4ADIR) \( -path '*po4a' -o -path '*po4a-*' \) -exec chmod 0755 {} \;
-	if [ -d "$(ORIGINALDIR)/sources/" ]; then \
-		rm -rf "$(BUILDDIR)/sources";\
-		mv "$(ORIGINALDIR)/sources" "$(BUILDDIR)/sources";\
+	find $(tools_dir) \( -path '*.py' -o -path '*.sh' \) -exec chmod 0755 {} \;
+	find $(po4a_dir) \( -path '*po4a' -o -path '*po4a-*' \) -exec chmod 0755 {} \;
+	if [ -d "$(original_dir)/sources/" ]; then \
+		rm -rf "$(build_dir)/sources";\
+		mv "$(original_dir)/sources" "$(build_dir)/sources";\
 	fi
-	if [ -d "$(ORIGINALDIR)/test-sources/" ]; then \
-		rm -rf "$(BUILDDIR)/test-sources";\
-		mv "$(ORIGINALDIR)/test-sources" "$(BUILDDIR)/test-sources";\
+	if [ -d "$(original_dir)/test-sources/" ]; then \
+		rm -rf "$(build_dir)/test-sources";\
+		mv "$(original_dir)/test-sources" "$(build_dir)/test-sources";\
 	fi
-	if [ -d "$(ORIGINALDIR)/$(ORIGINALSTATIC)/" ]; then \
-		rm -rf "$(ORIGINALDIR)/$(STATIC)";\
-		mv "$(ORIGINALDIR)/$(ORIGINALSTATIC)" "$(ORIGINALDIR)/$(STATIC)";\
+	if [ -d "$(original_dir)/$(legacy_main_source)/" ]; then \
+		rm -rf "$(original_dir)/$(main_source)";\
+		mv "$(original_dir)/$(legacy_main_source)" "$(original_dir)/$(main_source)";\
 	fi
 
 installextensions: initialize
@@ -163,8 +172,8 @@ installextensions: initialize
 	# Installing asciidoc extensions.
 	#
 	#
-	mkdir -p $(EXTENSIONDEST)
-	cp -fr "$(EXTENSIONSRC)/"* $(EXTENSIONDEST)
+	mkdir -p $(extensions_destination_dir)
+	cp -fr "$(extensions_source_dir)/"* $(extensions_destination_dir)
 
 simple-asciidoc: copyoriginal copytranslated refresh
 	#
@@ -172,32 +181,32 @@ simple-asciidoc: copyoriginal copytranslated refresh
 	# Building HTML straight from the AsciiDoc sources.
 	#
 	#
-	mkdir -p "$(SINGLEHTMLDIR)/images"
-	mkdir -p "$(SINGLEHTMLDIR)/css"
-	mkdir -p "$(SINGLEHTMLDIR)/js"
-	"$(ASCIIDOC)" $(ASCIIDOC_FLAGS) --conf-file="$(TOOLSCONFDIR)/asciidoc.conf"  --conf-file="$(CONFDIR)/asciidoc.conf" --attribute docinfo1 --attribute toc --out-file "$(SINGLEHTMLFILE)" "$(SRCFILE)"
-	rsync -ru "$(IMGTARGETDIR)/"* "$(SINGLEHTMLDIR)/images"
-	rsync -ru "$(CSSDIR)/"* "$(SINGLEHTMLDIR)/css"
-	rsync -ru "$(JSDIR)/"* "$(SINGLEHTMLDIR)/js"
+	mkdir -p "$(single_html_dir)/images"
+	mkdir -p "$(single_html_dir)/css"
+	mkdir -p "$(single_html_dir)/js"
+	"$(asciidoc)" $(asciidoc_flags) --conf-file="$(tools_config_dir)/asciidoc.conf"  --conf-file="$(config_dir)/asciidoc.conf" --attribute docinfo1 --attribute toc --out-file "$(single_html_file)" "$(source_document)"
+	rsync -ru "$(build_image_dir)/"* "$(single_html_dir)/images"
+	rsync -ru "$(tools_css_dir)/"* "$(single_html_dir)/css"
+	rsync -ru "$(tools_js_dir)/"* "$(single_html_dir)/js"
 
 copyoriginal:
 	#
 	# Copy original.
 	#
-	rsync -ru "$(ORIGINALDIR)/$(STATIC)/"* "$(BUILDDIR)/$(STATIC)"
-	rsync -ru "$(ORIGINALDIR)/$(IMPORTED)/"* "$(BUILDDIR)/$(IMPORTED)"
+	rsync -ru "$(original_dir)/$(main_source)/"* "$(build_dir)/$(main_source)"
+	rsync -ru "$(original_dir)/$(imported_source)/"* "$(build_dir)/$(imported_source)"
 
 copytranslated:
 	#
 	# Copy translated documents.
 	#
-	if [ -d "$(SRCDIR)/$(STATIC)/" ]; then rsync -r "$(SRCDIR)/$(STATIC)/"* "$(BUILDDIR)/$(STATIC)"; fi
-	if [ -d "$(SRCDIR)/$(IMPORTED)/" ]; then rsync -r "$(SRCDIR)/$(IMPORTED)/"* "$(BUILDDIR)/$(IMPORTED)"; fi
+	if [ -d "$(source_dir)/$(main_source)/" ]; then rsync -r "$(source_dir)/$(main_source)/"* "$(build_dir)/$(main_source)"; fi
+	if [ -d "$(source_dir)/$(imported_source)/" ]; then rsync -r "$(source_dir)/$(imported_source)/"* "$(build_dir)/$(imported_source)"; fi
 
 #
 # include the refresh rule.
 #
-include $(PARTSMAKE)
+include $(make_parts)
 
 add:
 	#
@@ -210,24 +219,24 @@ add:
 	#
 	if [ -z "$(document)" ]; then echo "Missing parameter 'document'."; exit 1; fi
 	if [ -z "$(part)" ]; then echo "Missing parameter 'part'."; exit 1; fi
-	$(eval target="$(TARGET)/$(document)")
+	$(eval target="$(target)/$(document)")
 	$(eval translated="$(document)")
-	$(eval original="$(TARGET)/$(ORIGINAL)/$(document)")
+	$(eval original="$(target)/$(original)/$(document)")
 	$(eval options=-f text -o asciidoc -L UTF-8 -M UTF-8)
 	if [ -f "$(translated)" ]; then \
-		PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE) $(options) -m $(original) -p "$(TMPPO)" -l $(translated);\
+		PERLLIB=$(po4a_lib_dir) $(po4a_gettextize) $(options) -m $(original) -p "$(tmp_po)" -l $(translated);\
 		else \
-		PERLLIB=$(PO4ALIB) $(PO4AGETTEXTIZE) $(options) -m $(original) -p "$(TMPPO)";\
+		PERLLIB=$(po4a_lib_dir) $(po4a_gettextize) $(options) -m $(original) -p "$(tmp_po)";\
 	fi
-	msginit -i "$(TMPPO)" -o "$(TMPPO)" --locale "$(LANGUAGE)" --no-translator
-	touch "$(PODIR)/$(part).po"
-	msgcat -o "$(PODIR)/$(part).po" "$(PODIR)/$(part).po" "$(TMPPO)"
-	if [ ! -f "$(PODIR)/$(part).conf" ]; then \
-		echo "[po4a_paths] $(TARGET)/pot/$(part).pot fr:$(PO)/$(part).po" >> "$(PODIR)/$(part).conf";\
-		echo "[po4a_alias: asciidoc] text opt:\"-o asciidoc\"" >> "$(PODIR)/$(part).conf";\
-		echo "[options] opt: \"-L UTF-8 -M UTF-8 -A UTF-8\"" >> "$(PODIR)/$(part).conf";\
-		echo -e "\t"'PERLLIB=\u0024(PO4ALIB) \u0024(PO4A) -f --keep 0 "'"$(PO)/$(part).conf\"" >> "$(PARTSMAKE)";\
+	msginit -i "$(tmp_po)" -o "$(tmp_po)" --locale "$(language)" --no-translator
+	touch "$(po_dir)/$(part).po"
+	msgcat -o "$(po_dir)/$(part).po" "$(po_dir)/$(part).po" "$(tmp_po)"
+	if [ ! -f "$(po_dir)/$(part).conf" ]; then \
+		echo "[po4a_paths] $(target)/pot/$(part).pot fr:$(po)/$(part).po" >> "$(po_dir)/$(part).conf";\
+		echo "[po4a_alias: asciidoc] text opt:\"-o asciidoc\"" >> "$(po_dir)/$(part).conf";\
+		echo "[options] opt: \"-L UTF-8 -M UTF-8 -A UTF-8\"" >> "$(po_dir)/$(part).conf";\
+		echo -e "\t"'PERLLIB=\u0024(po4a_lib_dir) \u0024(po4a) -f --keep 0 "'"$(po)/$(part).conf\"" >> "$(make_parts)";\
 	fi
-	echo "[type: asciidoc] $(original) $(LANGUAGE):$(target)" >> "$(PODIR)/$(part).conf"
+	echo "[type: asciidoc] $(original) $(language):$(target)" >> "$(po_dir)/$(part).conf"
 	# Document was added (if this line is reached)!
 
