@@ -31,6 +31,13 @@ po4a_dir                   = $(tools_dir)/bin/po4a
 po4a_lib_dir               = $(po4a_dir)/lib
 po_dir                     = $(CURDIR)/$(po)
 make_dir                   = $(tools_dir)/make
+# Commands
+asciidoc                   = $(asciidoc_dir)/asciidoc.py
+a2x                        = $(asciidoc_dir)/a2x.py
+po4a                       = $(po4a_dir)/po4a
+po4a_gettextize            = $(po4a_dir)/po4a-gettextize
+# Destination directories
+extensions_destination_dir = ~/.asciidoc
 #
 make_parts                 = $(CURDIR)/parts.make
 #
@@ -61,11 +68,7 @@ chunked_short_info_target  = $(build_dir)/$(project_name)-html.chunked
 #
 manpages_dir               = $(build_dir)/manpages
 upgrade_dir                = $(build_dir)/upgrade
-extensions_destination_dir = ~/.asciidoc
-asciidoc                   = $(asciidoc_dir)/asciidoc.py
-a2x                        = $(asciidoc_dir)/a2x.py
-po4a                       = $(po4a_dir)/po4a
-po4a_gettextize            = $(po4a_dir)/po4a-gettextize
+#
 tmp_po                     = $(build_dir)/tmp.po
 
 SHELL = /bin/bash
@@ -215,13 +218,13 @@ add:
 	# Note that the translated file has to have the same
 	# structure as the original.
 	# Usage:
-	# make add document="src/introduction/the-neo4j-graphdb.asciidoc" part="introduction"
+	# make add DOCUMENT="src/introduction/the-neo4j-graphdb.asciidoc" PART="introduction"
 	#
-	if [ -z "$(document)" ]; then echo "Missing parameter 'document'."; exit 1; fi
-	if [ -z "$(part)" ]; then echo "Missing parameter 'part'."; exit 1; fi
-	$(eval target="$(target)/$(document)")
-	$(eval translated="$(document)")
-	$(eval original="$(target)/$(original)/$(document)")
+	if [ -z "$(DOCUMENT)" ]; then echo "Missing parameter 'DOCUMENT'."; exit 1; fi
+	if [ -z "$(PART))" ]; then echo "Missing parameter 'PART'."; exit 1; fi
+	$(eval target_document="$(target)/$(DOCUMENT)")
+	$(eval translated="$(DOCUMENT)")
+	$(eval original="$(target)/$(original)/$(DOCUMENT)")
 	$(eval options=-f text -o asciidoc -L UTF-8 -M UTF-8)
 	if [ -f "$(translated)" ]; then \
 		PERLLIB=$(po4a_lib_dir) $(po4a_gettextize) $(options) -m $(original) -p "$(tmp_po)" -l $(translated);\
@@ -229,14 +232,14 @@ add:
 		PERLLIB=$(po4a_lib_dir) $(po4a_gettextize) $(options) -m $(original) -p "$(tmp_po)";\
 	fi
 	msginit -i "$(tmp_po)" -o "$(tmp_po)" --locale "$(language)" --no-translator
-	touch "$(po_dir)/$(part).po"
-	msgcat -o "$(po_dir)/$(part).po" "$(po_dir)/$(part).po" "$(tmp_po)"
-	if [ ! -f "$(po_dir)/$(part).conf" ]; then \
-		echo "[po4a_paths] $(target)/pot/$(part).pot fr:$(po)/$(part).po" >> "$(po_dir)/$(part).conf";\
-		echo "[po4a_alias: asciidoc] text opt:\"-o asciidoc\"" >> "$(po_dir)/$(part).conf";\
-		echo "[options] opt: \"-L UTF-8 -M UTF-8 -A UTF-8\"" >> "$(po_dir)/$(part).conf";\
-		echo -e "\t"'PERLLIB=\u0024(po4a_lib_dir) \u0024(po4a) -f --keep 0 "'"$(po)/$(part).conf\"" >> "$(make_parts)";\
+	touch "$(po_dir)/$(PART).po"
+	msgcat -o "$(po_dir)/$(PART).po" "$(po_dir)/$(PART).po" "$(tmp_po)"
+	if [ ! -f "$(po_dir)/$(PART).conf" ]; then \
+		echo "[po4a_paths] $(target)/pot/$(PART).pot fr:$(po)/$(PART).po" >> "$(po_dir)/$(PART).conf";\
+		echo "[po4a_alias: asciidoc] text opt:\"-o asciidoc\"" >> "$(po_dir)/$(PART).conf";\
+		echo "[options] opt: \"-L UTF-8 -M UTF-8 -A UTF-8\"" >> "$(po_dir)/$(PART).conf";\
+		echo -e "\t"'PERLLIB=\u0024(po4a_lib_dir) \u0024(po4a) -f --keep 0 "'"$(po)/$(PART).conf\"" >> "$(make_parts)";\
 	fi
-	echo "[type: asciidoc] $(original) $(language):$(target)" >> "$(po_dir)/$(part).conf"
+	echo "[type: asciidoc] $(original) $(language):$(target_document)" >> "$(po_dir)/$(PART).conf"
 	# Document was added (if this line is reached)!
 
