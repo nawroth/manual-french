@@ -39,8 +39,6 @@ po4a_gettextize            = $(po4a_dir)/po4a-gettextize
 # Destination directories
 extensions_destination_dir = ~/.asciidoc
 #
-make_parts                 = $(CURDIR)/parts.make
-#
 source_document            = $(build_source_dir)/$(project_name).asciidoc
 #
 docbook_file               = $(build_dir)/$(project_name)-shortinfo.xml
@@ -69,6 +67,8 @@ chunked_short_info_target  = $(build_dir)/$(project_name)-html.chunked
 manpages_dir               = $(build_dir)/manpages
 upgrade_dir                = $(build_dir)/upgrade
 #
+#
+make_parts                 = $(CURDIR)/parts.make
 tmp_po                     = $(build_dir)/tmp.po
 
 SHELL = /bin/bash
